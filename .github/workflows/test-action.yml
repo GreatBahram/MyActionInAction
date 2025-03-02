@@ -1,0 +1,22 @@
+name: Test Action
+on: [push]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repo to use
+              uses: actions/checkout@v4
+            - name: run my own container
+              id: my-action
+              uses: ./
+              with:
+                who-to-greet: 'bahram-khan' 
+            - name: output the answer
+              run: echo "The answer is ${{ steps.my-action.outputs.answer }}"
+            
+            - name: Test the container
+              if: ${{ steps.my-action.outputs.answer != 42 }}
+              run: |
+                echo "::error file=entrypoint.sh,line=4,title=error in the container::The answer was wrong."
+                exit 1
